@@ -1,0 +1,8 @@
+    {
+        "name": "salao-leila-monorepo",
+        "private": true,
+        "scripts": {
+            "dev:back": "cd backend && npm run dev",
+            "dev:front": "cd frontend && npm run dev"
+        }
+    }
