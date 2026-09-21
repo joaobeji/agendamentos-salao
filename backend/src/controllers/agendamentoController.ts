@@ -203,7 +203,7 @@ export async function listarAgendamentos(req: Request, res: Response) {
  */
 export async function atualizarAgendamento(req: Request, res: Response) {
   const { id } = req.params;
-  const { nova_data, status, operacional } = req.body; // operacional = true se for alteração pela Leila
+  const { nova_data, status, operacional, servicos_ids } = req.body;
 
   try {
     const db = await openDatabase();
@@ -233,10 +233,27 @@ export async function atualizarAgendamento(req: Request, res: Response) {
     const dataAtualizada = nova_data || agendamento.data_agendamento;
     const statusAtualizado = status || agendamento.status;
 
+    // Atualiza dados principais
     await db.run(
       `UPDATE agendamentos SET data_agendamento = ?, status = ? WHERE id = ?`,
       [dataAtualizada, statusAtualizado, id],
     );
+
+    // Se foram enviados novos IDs de serviços, atualiza os itens vinculados
+    if (servicos_ids && Array.isArray(servicos_ids)) {
+      // Remove os itens antigos
+      await db.run(`DELETE FROM agendamento_itens WHERE agendamento_id = ?`, [
+        id,
+      ]);
+
+      // Insere os novos itens
+      for (const servicoId of servicos_ids) {
+        await db.run(
+          `INSERT INTO agendamento_itens (agendamento_id, servico_id) VALUES (?, ?)`,
+          [id, servicoId],
+        );
+      }
+    }
 
     return res.json({ mensagem: "Agendamento atualizado com sucesso!" });
   } catch (error) {
