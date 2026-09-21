@@ -27,9 +27,9 @@
    ```
 
 3. Inicie o servidor/backend e o frontend conforme a estrutura do projeto.
-       `bash 
+    ```bash 
     npm run dev
-    `
+    ```
 4. Acesse a aplicação no navegador através do endereço local fornecido (ex: http://localhost:3000).
 
 ## Observações sobre o Desenvolvimento
